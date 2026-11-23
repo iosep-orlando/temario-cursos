@@ -1,0 +1,40 @@
+# Despliegue en Render como Blueprint. Ver la sección "Despliegue" del README.
+services:
+  - type: web
+    name: temario-cursos
+    runtime: node
+    plan: free
+    region: virginia # junto a MongoDB Atlas y Supabase (us-east-1)
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: MONGODB_DB
+        value: saas-cursos
+      # Render gratis bloquea los puertos SMTP: la demo guarda los mails en
+      # la base y los muestra en /bandeja.
+      - key: MAIL_TRANSPORT
+        value: outbox
+      - key: ADMIN_EMAILS
+        value: admin@demo.test
+      - key: AWS_BUCKET
+        value: cursos
+      - key: AWS_REGION
+        value: us-east-1
+      # Render inventa el secreto al crear el servicio.
+      - key: JWT_SECRET
+        generateValue: true
+      # Secretos: no van en el repositorio. Render los pide al crear el servicio.
+      - key: MONGODB_URI
+        sync: false
+      - key: AWS_URL
+        sync: false
+      - key: AWS_USERNAME
+        sync: false
+      - key: AWS_PASSWORD
+        sync: false

@@ -1,0 +1,48 @@
+# Desarrollo: MongoDB, MailHog y RustFS (S3).
+#
+#   docker compose up -d
+#
+# Si ya tenés alguno andando (por otro proyecto), levantá solo lo que falta,
+# por ejemplo: docker compose up -d rustfs
+# Los puertos se cambian con variables (o en un archivo .env junto a este):
+#   RUSTFS_S3_PORT=9050 RUSTFS_CONSOLE_PORT=9051 docker compose up -d rustfs
+#
+#   MongoDB   mongodb://localhost:27017
+#   MailHog   SMTP en el 1025; los mails se ven en http://localhost:8025
+#   RustFS    la API S3 en http://localhost:9001 (AWS_URL);
+#             la consola web en http://localhost:9002 (rustfsadmin / rustfsadmin)
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_UI_PORT:-8025}:8025"
+    restart: unless-stopped
+  rustfs:
+    # RustFS todavía no publica versiones estables: se usa la última.
+    image: rustfs/rustfs:latest
+    command: /data
+    environment:
+      # Solo para tu máquina: nunca en un servidor.
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+    ports:
+      - "${RUSTFS_S3_PORT:-9001}:9000"
+      - "${RUSTFS_CONSOLE_PORT:-9002}:9001"
+    volumes:
+      - rustfs-data:/data
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+  rustfs-data:
