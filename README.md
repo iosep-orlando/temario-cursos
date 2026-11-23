@@ -19,9 +19,8 @@ El enunciado original está en [README-enunciado.md](README-enunciado.md).
 
 ## Demo
 
-Se publica en **https://temario-cursos.onrender.com** (pendiente: ver
-«Despliegue»). Es el plan gratuito: si estuvo un rato sin visitas, tarda
-unos 50 segundos en despertar.
+**https://temario-cursos.onrender.com** (plan gratuito: si estuvo un rato sin
+visitas, tarda unos 50 segundos en despertar).
 
 | Para entrar como | Email |
 |------------------|-------|
@@ -193,6 +192,19 @@ configuración está en [`render.yaml`](render.yaml).
      AWS_URL=https://<proyecto>.storage.supabase.co/storage/v1/s3 AWS_BUCKET=cursos AWS_REGION=us-east-1 \
      AWS_USERNAME="$AKID" AWS_PASSWORD="$AKSEC" npx tsx scripts/seed.ts; unset ATLAS AKID AKSEC
    ```
+
+Comprobado en la versión publicada:
+
+- ingreso con `admin@demo.test` usando el enlace de la bandeja de demo;
+- con `alumna@temario.test`, la chuleta en PDF de «Fusionar sin miedo» se
+  abre desde el bucket `cursos` de Supabase.
+
+Lo que implica el plan gratuito:
+
+- **Render duerme a los 15 minutos sin visitas.**
+- **Supabase pausa el proyecto tras una semana sin uso:** se reactiva desde
+  su panel, y mientras tanto los archivos dan 503.
+- **Atlas pausa el clúster tras 30 días sin conexiones.**
 
 ## Tests y cobertura
 
